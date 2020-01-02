@@ -2,7 +2,7 @@ FROM python:3.7-slim-stretch
 
 RUN pip uninstall PIL
 RUN pip install pillow
-RUN apt-get update && build-dep python-pillow && apt-get install -y git python3-dev gcc \
+RUN apt-get update && apt-get install -y git python3-dev gcc \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
