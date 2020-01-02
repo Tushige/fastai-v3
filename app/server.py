@@ -12,7 +12,7 @@ from starlette.staticfiles import StaticFiles
 #export_file_url = 'https://www.dropbox.com/s/6bgq8t6yextloqp/export.pkl?raw=1'
 
 #iron man vs captain america model
-export_file_url = 'https://www.dropbox.com/s/ztvsk3pd7kigovt/export.pkl?dl=1'
+export_file_url = 'https://www.dropbox.com/s/ztvsk3pd7kigovt/export.pkl?raw=1'
 export_file_name = 'export.pkl'
 
 classes = ['iron_man', 'captain_america']
