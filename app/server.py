@@ -22,7 +22,7 @@ app = Starlette()
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_headers=['X-Requested-With', 'Content-Type'])
 app.mount('/static', StaticFiles(directory='app/static'))
 
-
+print('initial setup complete')
 async def download_file(url, dest):
     if dest.exists(): return
     async with aiohttp.ClientSession() as session:
@@ -33,9 +33,13 @@ async def download_file(url, dest):
 
 
 async def setup_learner():
+    print('downloading file')
     await download_file(export_file_url, path / export_file_name)
+    print('success')
     try:
+        print('creating learn object')
         learn = load_learner(path, export_file_name)
+        print('success')
         return learn
     except RuntimeError as e:
         if len(e.args) > 0 and 'CPU-only machine' in e.args[0]:
@@ -45,8 +49,9 @@ async def setup_learner():
         else:
             raise
 
-
+print('setting up event loop')
 loop = asyncio.get_event_loop()
+print('success')
 tasks = [asyncio.ensure_future(setup_learner())]
 learn = loop.run_until_complete(asyncio.gather(*tasks))[0]
 loop.close()
