@@ -1,5 +1,5 @@
 FROM python:3.7-slim-stretch
-
+RUN python -m pip install -U --force-reinstall pip
 RUN pip uninstall PIL
 RUN apt-get update && apt-get install -y git python3-dev gcc \
     && rm -rf /var/lib/apt/lists/*
