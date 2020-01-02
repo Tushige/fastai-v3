@@ -1,8 +1,7 @@
 FROM python:3.7-slim-stretch
 
 RUN pip uninstall PIL
-RUN apt-get install python3-dev python3-setuptools
-RUN pip install pillow==5.1.0 torchvision==0.2.1
+RUN apt-get install python-dev python-setuptools
 RUN apt-get update && apt-get install -y git python3-dev gcc \
     && rm -rf /var/lib/apt/lists/*
 
