@@ -9,8 +9,6 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
-#export_file_url = 'https://www.dropbox.com/s/6bgq8t6yextloqp/export.pkl?raw=1'
-
 #iron man vs captain america model
 export_file_url = 'https://www.dropbox.com/s/ztvsk3pd7kigovt/export.pkl?raw=1'
 export_file_name = 'export.pkl'
@@ -22,7 +20,6 @@ app = Starlette()
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_headers=['X-Requested-With', 'Content-Type'])
 app.mount('/static', StaticFiles(directory='app/static'))
 
-print('initial setup complete')
 async def download_file(url, dest):
     if dest.exists(): return
     async with aiohttp.ClientSession() as session:
@@ -33,13 +30,9 @@ async def download_file(url, dest):
 
 
 async def setup_learner():
-    print('downloading file')
     await download_file(export_file_url, path / export_file_name)
-    print('success')
     try:
-        print('creating learn object')
         learn = load_learner(path, export_file_name)
-        print('success')
         return learn
     except RuntimeError as e:
         if len(e.args) > 0 and 'CPU-only machine' in e.args[0]:
@@ -49,9 +42,7 @@ async def setup_learner():
         else:
             raise
 
-print('setting up event loop')
 loop = asyncio.get_event_loop()
-print('success')
 tasks = [asyncio.ensure_future(setup_learner())]
 learn = loop.run_until_complete(asyncio.gather(*tasks))[0]
 loop.close()
@@ -66,7 +57,10 @@ async def homepage(request):
 @app.route('/analyze', methods=['POST'])
 async def analyze(request):
     img_data = await request.form()
-    img_bytes = await (img_data['file'].read())
+    try:
+        img_bytes = await (img_data['file'].read()) # possible to crash here
+    except:
+        print("ERROR: Cannot read image")
     img = open_image(BytesIO(img_bytes))
     prediction = learn.predict(img)[0]
     return JSONResponse({'result': str(prediction)})
